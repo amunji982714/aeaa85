@@ -1,14 +1,15 @@
 import React from "react";
-import { Form, FormField } from "@/types/form";
+import { FormNode, FormField } from "@/types/form";
 import { PrefillSource } from "@/types/prefill";
 
 type Props = {
   isOpen: boolean;
   fieldId: string | null;
-  upstreamForms: Form[];
+  upstreamForms: FormNode[]; // Change here
   onClose: () => void;
-  onSelect: (source: PrefillSource) => void;
+  onSelect: (source: PrefillSource | null) => void;
 };
+
 
 export const PrefillModal: React.FC<Props> = ({
   isOpen,

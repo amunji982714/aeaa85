@@ -1,38 +1,32 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { Form, PrefillMapping } from "@/types/form";
-import { useFormContext } from "@/context/FormContext";
+import React, { useState, useEffect } from "react";
+import { Form, FormField } from "@/types/form";
 import { PrefillSource } from "@/types/prefill";
+import { useFormContext } from "@/context/FormContext";
 import { getUpstreamForms } from "@/utils/formGraph";
-import { PrefillModal } from "./prefillModal"; // Create this component
+import { PrefillModal } from "./prefillModal";
 
 type PrefillEditorProps = {
   formId: string;
 };
 
-// Inside the component (after function PrefillEditor({ formId }) { ... )
+// type Props = {
+//   isOpen: boolean;
+//   fieldId: string | null;
+//   upstreamForms: FormNode[]; // Change here
+//   onClose: () => void;
+//   onSelect: (source: PrefillSource | null) => void;
+// };
 
-
-
-
+type FieldMapping = Record<string, PrefillSource | null>;
 
 export const PrefillEditor = ({ formId }: PrefillEditorProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [activeField, setActiveField] = useState<string | null>(null);
-  const { formGraph } = useFormContext(); // assuming you have the form graph in context
   const [form, setForm] = useState<Form | null>(null);
-  const upstreamForms = getUpstreamForms(formId, formGraph);
-  const [prefillMapping, setPrefillMapping] = useState<Record<string, string>>({});
+  const [prefillMapping, setPrefillMapping] = useState<FieldMapping>({});
 
-function setMapping(fieldId: string, source: PrefillSource | null) {
-  setPrefillMapping((prev) => ({
-    ...prev,
-    [selectedFormId]: {
-      ...(prev[selectedFormId] || {}),
-      [fieldId]: source,
-    },
-  }));
-}
+  const { formGraph } = useFormContext();
+  const upstreamForms = getUpstreamForms(formId, formGraph);
 
   useEffect(() => {
     const selected = formGraph.find((f) => f.id === formId);
@@ -41,17 +35,12 @@ function setMapping(fieldId: string, source: PrefillSource | null) {
     }
   }, [formId, formGraph]);
 
-  const openMappingModal = (fieldName: string) => {
-    // TODO: Open modal and select data source for this field
-    console.log("Open mapping modal for", fieldName);
-  };
-
-  const clearMapping = (fieldName: string) => {
-    setPrefillMapping((prev) => {
-      const copy = { ...prev };
-      delete copy[fieldName];
-      return copy;
-    });
+  const setMapping = (fieldId: string | null, source: PrefillSource | null) => {
+    if (!fieldId) return;
+    setPrefillMapping((prev) => ({
+      ...prev,
+      [fieldId]: source,
+    }));
   };
 
   if (!form) return <p>Loading form...</p>;
@@ -65,13 +54,13 @@ function setMapping(fieldId: string, source: PrefillSource | null) {
               <strong>{field.label || field.id}</strong>
               <p className="text-sm text-gray-500">
                 Prefilled from:{" "}
-                {prefillMapping[formId]?.[field.id]
-                  ? `${prefillMapping[formId][field.id]?.formId}.${prefillMapping[formId][field.id]?.fieldId}`
+                {prefillMapping[field.id]
+                  ? `${prefillMapping[field.id]?.formId}.${prefillMapping[field.id]?.fieldId}`
                   : "None"}
               </p>
             </div>
             <div className="flex gap-2">
-              {prefillMapping[formId]?.[field.id] && (
+              {prefillMapping[field.id] && (
                 <button
                   onClick={() => setMapping(field.id, null)}
                   className="text-red-500"
@@ -86,12 +75,13 @@ function setMapping(fieldId: string, source: PrefillSource | null) {
                 }}
                 className="text-blue-500"
               >
-                {prefillMapping[formId]?.[field.id] ? "Edit" : "Configure"}
+                {prefillMapping[field.id] ? "Edit" : "Configure"}
               </button>
             </div>
           </div>
         </div>
       ))}
+
       <PrefillModal
         isOpen={isModalOpen}
         fieldId={activeField}
@@ -102,7 +92,6 @@ function setMapping(fieldId: string, source: PrefillSource | null) {
           setModalOpen(false);
         }}
       />
-
     </div>
   );
 };
