@@ -9,14 +9,6 @@ type PrefillEditorProps = {
   formId: string;
 };
 
-// type Props = {
-//   isOpen: boolean;
-//   fieldId: string | null;
-//   upstreamForms: FormNode[]; // Change here
-//   onClose: () => void;
-//   onSelect: (source: PrefillSource | null) => void;
-// };
-
 type FieldMapping = Record<string, PrefillSource | null>;
 
 export const PrefillEditor = ({ formId }: PrefillEditorProps) => {
@@ -26,10 +18,14 @@ export const PrefillEditor = ({ formId }: PrefillEditorProps) => {
   const [prefillMapping, setPrefillMapping] = useState<FieldMapping>({});
 
   const { formGraph } = useFormContext();
-  const upstreamForms = getUpstreamForms(formId, formGraph);
+  const upstreamForms: Form[] = getUpstreamForms(formId, formGraph).map(f => ({
+  ...f,
+  children: f.children ?? [] // ensure children is always a string[]
+}));
+
 
   useEffect(() => {
-    const selected = formGraph.find((f) => f.id === formId);
+    const selected = formGraph?.find((f) => f.id === formId);
     if (selected) {
       setForm(selected);
     }

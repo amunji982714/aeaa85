@@ -7,7 +7,7 @@ export interface Form {
   dependencies?: string[]; // list of form ids this form depends on
 }
 
-const API_URL = "http://localhost:3001/api/action-blueprints";
+const API_URL = "http://localhost:3000/forms";
 
 /**
  * Fetches the form DAG from the mock Avantos server.

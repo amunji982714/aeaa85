@@ -7,9 +7,9 @@ interface FormContextType {
   forms: Form[];
   formGraph: Form[];
   setForms: React.Dispatch<React.SetStateAction<Form[]>>;
-  setFormGraph: (form: Form[]) => void;
+  setFormGraph: React.Dispatch<React.SetStateAction<Form[]>>;
 
-  selectedForm: String | null;
+  selectedForm: string | null;
   setSelectedForm: (formId: string | null) => void;
 
   prefillMappings: Record<string, PrefillMapping[]>;

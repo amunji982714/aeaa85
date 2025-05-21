@@ -1,13 +1,13 @@
 // utils/formGraph.ts
 
-import { FormNode } from "@/types/form";
+import { Form } from "@/types/form";
 
 export function getUpstreamForms(
   formId: string,
-  graph: FormNode[]
-): FormNode[] {
+  graph: Form[]
+): Form[] {
   const visited = new Set<string>();
-  const upstream: FormNode[] = [];
+  const upstream: Form[] = [];
 
   function dfs(currentId: string) {
     for (const node of graph) {

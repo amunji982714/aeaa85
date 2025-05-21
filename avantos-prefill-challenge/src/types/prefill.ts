@@ -4,7 +4,7 @@ export type PrefillSource = {
   type: "form" | "global";
 };
 
-export type PrefillMapping = {
+export type PrefillMappingMap = {
   [formId: string]: {
     [fieldId: string]: PrefillSource | null;
   };

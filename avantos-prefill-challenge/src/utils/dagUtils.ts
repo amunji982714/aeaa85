@@ -1,6 +1,6 @@
-import { FormNode } from "../types/form";
+import { Form } from "../types/form";
 
-export function getAllAncestors(formId: string, graph: FormNode[]): string[] {
+export function getAllAncestors(formId: string, graph: Form[]): string[] {
   const visited = new Set<string>();
   const stack = [formId];
 
